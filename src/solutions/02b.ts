@@ -1,33 +1,32 @@
 import InputParser from '../utils/input-parser';
 
-InputParser.create({
-    url: 'https://adventofcode.com/2023/day/2/input',
-}).then((parser) => {
-    const values = parser.toArray();
+InputParser.create({ day: 2 }).then((parser) => {
+    const games = parser.toArray();
 
-    const result = values.reduce((outerAcc, value) => {
-        const [, , outcome] = value.match(/Game\s(\d+):\s(.*)/);
-        const grabs = outcome.split(';');
-        const colorsets = grabs.map((grab) => grab.split(', '));
-        const colorCount = new Map([
+    const result = games.reduce((iAcc, game) => {
+        const [, , roundData] = game.match(/Game\s(\d+):\s(.*)/);
+        const rounds = roundData
+            .split(';')
+            .map((cubeCount) => cubeCount.split(', '));
+        const cubeCountByColor = new Map([
             ['red', []],
             ['green', []],
             ['blue', []],
         ]);
 
-        colorsets.forEach((grab) => {
-            grab.forEach((data) => {
-                const [number, color] = data.trim().split(' ');
-                colorCount.get(color).push(parseInt(number));
+        rounds.forEach((grab) => {
+            grab.forEach((colorData) => {
+                const [count, color] = colorData.trim().split(' ');
+                cubeCountByColor.get(color).push(parseInt(count));
             });
         });
 
-        return (
-            outerAcc +
-            [...colorCount.values()].reduce((innerAcc, el) => {
-                return innerAcc * Math.max(...el);
-            }, 1)
-        );
+        const power =
+            iAcc +
+            [...cubeCountByColor.values()].reduce((jAcc, count) => {
+                return jAcc * Math.max(...count);
+            }, 1);
+        return power;
     }, 0);
 
     console.log({ result });
