@@ -4,6 +4,7 @@ import fs from 'fs';
 interface InputParserOptions {
     filename: string;
     url: string;
+    day: number;
     separator: string;
     path: string;
 }
@@ -47,6 +48,12 @@ export default class InputParser {
 
         if (opts?.url) {
             const file = await InputParser._fetch(opts.url);
+            ip.file = file;
+        }
+
+        if (opts?.day) {
+            const url = `https://adventofcode.com/2023/day/${opts.day}/input`;
+            const file = await InputParser._fetch(url);
             ip.file = file;
         }
 
